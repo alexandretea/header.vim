@@ -3,7 +3,6 @@ Forked from [vim-scripts/header.vim](https://github.com/vim-scripts/header.vim) 
 * different header template
 * if the variable `g:header_author` is set, the author will be set with this variable's value instead of the os' user
 
-___
 ## Original README
 This is a mirror of http://www.vim.org/scripts/script.php?script_id=1142
 
