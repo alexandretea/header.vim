@@ -24,24 +24,12 @@ function s:filetype ()
 
   let s:file = expand("<afile>:t")
   let l:ft = &ft
-"  if match (s:file, "\.sh$") != -1
-"    let s:comment = "#"
-"    let s:type = s:comment . "!" . system ("whereis -b bash | awk '{print $2}' | tr -d '\n'")
-"  elseif match (s:file, "\.py$") != -1
-"    let s:comment = "#"
-"    let s:type = s:comment . "!" . system ("whereis -b python | awk '{print $2}' | tr -d '\n'")
-"  elseif match (s:file, "\.pl$") != -1
-"    let s:comment = "#"
-"    let s:type = s:comment . "!" . system ("whereis -b perl | awk '{print $2}' | tr -d '\n'")
-"  elseif match (s:file, "\.vim$") != -1
-"    let s:comment = "\""
-"    let s:type = s:comment . " Vim File"
   if l:ft ==# 'sh'
       let s:comment = "#"
       let s:type = s:comment . "!/usr/bin/env bash"
   elseif l:ft ==# 'python'
       let s:comment = "#"
-      let s:type = s:comment . "-*- coding:utf-8 -*-"
+      let s:type = s:comment . "!/usr/bin/env python"
   elseif l:ft ==# 'perl'
       let s:comment = "#"
       let s:type = s:comment . "!/usr/bin/env perl"
@@ -81,19 +69,24 @@ function s:insert ()
 
   call s:filetype ()
 
-  let s:author = s:comment .    " AUTHOR:   " . system ("id -un | tr -d '\n'")
-"  let s:file = s:comment .      " FILE:     " . expand("<afile>:p")
-  let s:file = s:comment .      " FILE:     " . expand("<afile>")
-  let s:role = s:comment .      " ROLE:     TODO (some explanation)"
-  let s:created = s:comment .   " CREATED:  " . strftime ("%Y-%m-%d %H:%M:%S")
-  let s:modified = s:comment .  " MODIFIED: " . strftime ("%Y-%m-%d %H:%M:%S")
+  if exists("g:header_author")
+      let s:_author = g:header_author
+  else
+      let s:_author = system("id -un | tr -d '\n'")
+  endif
+
+  let s:author = s:comment .    " Author:   " . s:_author
+  let s:file = s:comment .      " File:     " . expand("<afile>")
+  let s:role = s:comment .      " Purpose:  TODO (a one-line explanation)"
+  let s:created = s:comment .   " Created:  " . strftime("%Y-%m-%d %H:%M:%S")
+  let s:modified = s:comment .  " Modified: " . strftime("%Y-%m-%d %H:%M:%S")
 
   call append (0, s:type)
-  call append (1, s:author)
-  call append (2, s:file)
-  call append (3, s:role)
-  call append (4, s:created)
-  call append (5, s:modified)
+  call append (2, s:author)
+  call append (3, s:file)
+  call append (4, s:role)
+  call append (5, s:created)
+  call append (6, s:modified)
 
   unlet s:comment
   unlet s:type
@@ -114,12 +107,12 @@ function s:update ()
 
   call s:filetype ()
 
-  let s:pattern = s:comment . " MODIFIED: [0-9]"
-  let s:line = getline (6)
+  let s:pattern = s:comment . " Modified: [0-9]"
+  let s:line = getline (7)
 
   if match (s:line, s:pattern) != -1
-    let s:modified = s:comment . " MODIFIED: " . strftime ("%Y-%m-%d %H:%M:%S")
-    call setline (6, s:modified)
+    let s:modified = s:comment . " Modified: " . strftime ("%Y-%m-%d %H:%M:%S")
+    call setline (7, s:modified)
     unlet s:modified
   endif
 
