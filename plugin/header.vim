@@ -20,7 +20,7 @@
 " when the file is not a script executable.
 
 
-function s:filetype ()
+function s:filetype()
 
   let s:file = expand("<afile>:t")
   let l:ft = &ft
@@ -65,9 +65,9 @@ endfunction
 " created = Date of the file creation.
 " modified = Date of the last modification.
 
-function s:insert ()
+function s:insert()
 
-  call s:filetype ()
+  call s:filetype()
 
   if exists("g:header_author")
       let s:_author = g:header_author
@@ -76,17 +76,19 @@ function s:insert ()
   endif
 
   let s:author = s:comment .    " Author:   " . s:_author
-  let s:file = s:comment .      " File:     " . expand("<afile>")
+  let s:file = s:comment .      " File:     "
+              \ . expand("%:p:h") . "/" . expand("%:t")
   let s:role = s:comment .      " Purpose:  TODO (a one-line explanation)"
   let s:created = s:comment .   " Created:  " . strftime("%Y-%m-%d %H:%M:%S")
   let s:modified = s:comment .  " Modified: " . strftime("%Y-%m-%d %H:%M:%S")
 
-  call append (0, s:type)
-  call append (2, s:author)
-  call append (3, s:file)
-  call append (4, s:role)
-  call append (5, s:created)
-  call append (6, s:modified)
+  call append(0, s:type)
+  call append(1, "")
+  call append(2, s:author)
+  call append(3, s:file)
+  call append(4, s:role)
+  call append(5, s:created)
+  call append(6, s:modified)
 
   unlet s:comment
   unlet s:type
@@ -108,11 +110,11 @@ function s:update ()
   call s:filetype ()
 
   let s:pattern = s:comment . " Modified: [0-9]"
-  let s:line = getline (7)
+  let s:line = getline(7)
 
   if match (s:line, s:pattern) != -1
-    let s:modified = s:comment . " Modified: " . strftime ("%Y-%m-%d %H:%M:%S")
-    call setline (7, s:modified)
+    let s:modified = s:comment . " Modified: " . strftime("%Y-%m-%d %H:%M:%S")
+    call setline(7, s:modified)
     unlet s:modified
   endif
 
@@ -123,5 +125,7 @@ function s:update ()
 endfunction
 
 
-autocmd BufNewFile * call s:insert ()
-autocmd BufWritePre * call s:update ()
+autocmd BufNewFile * call s:insert()
+autocmd BufWritePre * call s:update()
+
+command HeaderInsert call s:insert()
